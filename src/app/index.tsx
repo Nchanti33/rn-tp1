@@ -1,9 +1,12 @@
-import { Text, View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+import { AlbumCard } from "@/components/album-card";
+import { ALBUMS } from "@/data/albums";
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+      <AlbumCard album={ALBUMS[0]} />
     </View>
   );
 }
@@ -11,7 +14,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    padding: 16,
+    maxWidth: 400,
   },
 });
