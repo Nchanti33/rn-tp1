@@ -1,14 +1,19 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Album } from "@/models/album";
-
-const priceFormatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" });
+import { formatPrice } from "@/utils/format";
 
 type AlbumCardProps = {
   album: Album;
+  inCart: boolean;
+  onToggleCart: (albumId: string) => void;
 };
 
-export function AlbumCard({ album }: AlbumCardProps) {
+export function AlbumCard({ album, inCart, onToggleCart }: AlbumCardProps) {
+  let label = "Ajouter au panier";
+  if (!album.inStock) label = "Épuisé";
+  else if (inCart) label = "Dans le panier ✓";
+
   return (
     <View style={styles.card}>
       <Image source={{ uri: album.coverUrl }} style={styles.cover} />
@@ -20,7 +25,20 @@ export function AlbumCard({ album }: AlbumCardProps) {
         <Text style={styles.artist} numberOfLines={1}>
           {album.artist} · {album.year}
         </Text>
-        <Text style={styles.price}>{priceFormatter.format(album.price)}</Text>
+        <Text style={styles.price}>{formatPrice(album.price)}</Text>
+        <Pressable
+          onPress={() => onToggleCart(album.id)}
+          disabled={!album.inStock}
+          accessibilityRole="button"
+          style={({ pressed }) => [
+            styles.button,
+            inCart && styles.buttonInCart,
+            !album.inStock && styles.buttonDisabled,
+            pressed && styles.buttonPressed,
+          ]}
+        >
+          <Text style={[styles.buttonLabel, !album.inStock && styles.buttonLabelDisabled]}>{label}</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -28,6 +46,7 @@ export function AlbumCard({ album }: AlbumCardProps) {
 
 const styles = StyleSheet.create({
   card: {
+    flex: 1,
     backgroundColor: "#fff",
     borderRadius: 12,
     overflow: "hidden",
@@ -63,5 +82,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#1d1f3a",
+  },
+  button: {
+    marginTop: 10,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    backgroundColor: "#1d1f3a",
+  },
+  buttonInCart: {
+    backgroundColor: "#2a9d8f",
+  },
+  buttonDisabled: {
+    backgroundColor: "#d5d5da",
+  },
+  buttonPressed: {
+    opacity: 0.7,
+  },
+  buttonLabel: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  buttonLabelDisabled: {
+    color: "#888",
   },
 });

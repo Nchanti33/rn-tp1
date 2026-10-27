@@ -1,6 +1,8 @@
 import { useWindowDimensions } from "react-native";
 
-export function useColumns(): number {
+export type Columns = 1 | 2 | 3 | 4;
+
+export function useColumns(): Columns {
   const { width } = useWindowDimensions();
 
   if (width >= 1200) return 4;
